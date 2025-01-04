@@ -1,29 +1,36 @@
 const express = require("express");
+const connectDB = require("./config/database");
+const UserModel = require("./models/user");
 const app = express();
 
-app.get("/user", (req, res) => {
-  console.log(req.query);
-  res.send({ firstname: "John", lastname: "Doe" }),
-    (req, res) => {
-      res.send("Hello response2");
-    };
+//creating an api to connect to db
+app.post("/signup", async (req, res) => {
+  //creating a new instance of an User model
+  const user = new UserModel({
+    firstName: "Siva",
+    lastName: "Kumar",
+    age: 26,
+    email: "siva@kumar.com",
+    password: "siva@112",
+    phoneNumber: 6876979,
+    gender: "male",
+  });
+  try {
+    await user.save();
+    res.send("added data successfully");
+  } catch (err) {
+    res.status(400).send("Error saving user" + err.message);
+  }
 });
-// app.use("/test", (req, res) => {
-//   res.send("Hello World");
-// });
 
-// app.use("/hello", (req, res) => {
-//   res.send("Hello Hello");
-// });
-// app.use("/", (req, res) => {
-//   res.send("Empty");
-// });
-// app.use("hello/2", (req, res) => {
-//   res.send("Hello without /");
-// });
-// app.use("/xyz", (req, res) => {
-//   res.send("xyz");
-// });
-app.listen(4000, () => {
-  console.log("Server is running on port 4000");
-});
+//First connect to cluster then DB then listen on the server
+connectDB()
+  .then(() => {
+    console.log("Database connection established");
+    app.listen(4000, () => {
+      console.log("Server is running on port 4000");
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+  });
