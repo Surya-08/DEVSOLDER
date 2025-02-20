@@ -1,0 +1,57 @@
+const express = require("express");
+
+const profileRouter = express.Router();
+const userAuth = require("../middlewares/auth.js");
+const UserModel = require("../models/user");
+
+profileRouter.get("/profile", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("Error fetching profile data" + err.message);
+  }
+});
+
+//Update data of the user
+profileRouter.patch("/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params?.userId;
+    const data = req.body;
+    const allowed_updates = ["age", "gender", "skills", "about", "photoUrl"];
+    const updatedUser = Object.keys(data).every((item) =>
+      allowed_updates.includes(item)
+    );
+    if (!updatedUser) {
+      throw new Error("Invalid updating user");
+    }
+    const user = await new UserModel.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+    await user.save();
+
+    res.send(user + "User updated successfully");
+  } catch {
+    (err) => {
+      res.status(400).send("Error updating user" + err.message);
+    };
+  }
+});
+
+//delete a user from the db
+profileRouter.delete("/user", async (req, res) => {
+  try {
+    const deleteUser = await UserModel.findOneAndDelete({
+      //   email: req.body.email,
+      _id: req.body.id,
+    });
+    res.send(deleteUser);
+  } catch {
+    (err) => {
+      res.status(400).send("Error deleting user" + err.message);
+    };
+  }
+});
+
+module.exports = profileRouter;
