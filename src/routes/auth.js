@@ -13,7 +13,6 @@ authRouter.post("/signup", async (req, res) => {
     const { firstName, lastName, emailId, password, age, gender } = req.body;
     //Encrypt the password
     const passwordHash = await bcrypt.hash(password, 10);
-    console.log(passwordHash);
     //creating a new instance of an User model
     const user = new UserModel({
       firstName,
@@ -53,6 +52,14 @@ authRouter.post("/login", async (req, res) => {
   } catch (err) {
     res.status(400).send("Error logging in user " + err.message);
   }
+});
+
+authRouter.post("/logout", async (req, res) => {
+  res
+    .cookie("token", null, {
+      expires: new Date(Date.now()),
+    })
+    .send("Logged out successfully");
 });
 
 module.exports = authRouter;

@@ -14,8 +14,14 @@
 
 ## connectionRequestRouter
 
-- POST /request/send/intrested/:userId
-- POST /request/send/ignored/:userId
+- POST /request/send/:status/:userId
+  --- ---- corner cases:
+
+  1. allow only for interested and ignored
+  2. once request is sent to other user , it can't be sent again i.e., request is sent only once and receiver and sender can't be same
+  3. Check if the users are from DB or not bc'z of attacks i.e., any data can be sent in req body . so check if the users are from our db i.e., they are registered to devSolder or not
+  4. Can't send request to fromUserId to fromUserId ... i.e., request to same account cannot be sent
+
 - POST /request/review/accepted/:userId
 - POST /request/review/rejected/:userId
 
