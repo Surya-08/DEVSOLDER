@@ -22,13 +22,12 @@
   3. Check if the users are from DB or not bc'z of attacks i.e., any data can be sent in req body . so check if the users are from our db i.e., they are registered to devSolder or not
   4. Can't send request to fromUserId to fromUserId ... i.e., request to same account cannot be sent
 
-- POST /request/review/accepted/:userId
-- POST /request/review/rejected/:userId
+- POST /request/review/:status/:requestId
 
 ## userConnectionsRouter
 
 - GET /connections
-- GET /request/received
-- GET /feed ---- gets u the users of other users in the platform
+- GET /user/requests/received
+- GET /user/feed ---- gets u the users of other users in the platform
 
 Status - intrested, ignored, accepted, rejected

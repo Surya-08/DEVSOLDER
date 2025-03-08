@@ -55,6 +55,39 @@ requestRouter.post(
     }
   }
 );
+
+requestRouter.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const loggedInUser = req.user;
+      const { status, requestId } = req.params;
+      const allowedStatus = ["accepted", "rejected"];
+      if (!allowedStatus.includes(status)) {
+        return res
+          .status(404)
+          .json({ message: "Invalid review request" + status });
+      }
+      const receiverRequest = await connectionRequestModel.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
+      if (!receiverRequest) {
+        return res
+          .status(404)
+          .json({ message: "Connection request not found!!" });
+      }
+      receiverRequest.status = status;
+      const data = await receiverRequest.save();
+      res.json({ message: loggedInUser.firstName + " " + status, data });
+    } catch (err) {
+      res.status(404).send("ERROR: " + err.message);
+    }
+  }
+);
+
 //GET all the users from the db
 requestRouter.get("/feed", async (req, res) => {
   try {
