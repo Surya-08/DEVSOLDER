@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
-      required: true,
     },
     emailId: {
       type: String,
@@ -45,7 +44,7 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      required: true,
+
       validate(value) {
         if (!["male", "female", "others"].includes(value)) {
           throw new Error("Please check the input");
